@@ -20,11 +20,14 @@ public class PedidoModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Pedido_id")
     private Long id;
 
     @CreationTimestamp
+    @Column(name = "Data_Venda")
     private LocalDateTime dataDaVenda;
 
+    @Column(name = "Valor_Total")
     private double valorTotalPedido;
 
     //Um pedido pode conter muitos produtos
