@@ -56,5 +56,25 @@ public class PedidoService {
         return pedidoRepository.findAll();
     }
 
+    public PedidoModel mostrarPedidoPorID(Long id) {
+        Optional<PedidoModel> pedidoMostrar = pedidoRepository.findById(id);
+        return pedidoMostrar.orElse(null);
+    }
+
+    public void deletarPedidoPorID(Long id) {
+        PedidoModel pedidoDeletar = mostrarPedidoPorID(id);
+        if (pedidoDeletar != null) {
+            pedidoRepository.delete(pedidoDeletar);
+        }
+    }
+
+    public void editarPedidoPorID(Long id, PedidoModel pedidoAtualizado) {
+        if (pedidoRepository.existsById(id)) {
+            pedidoAtualizado.setId(id);
+            pedidoRepository.save(pedidoAtualizado);
+        } else {
+            System.out.println("pedido nao encontrado");
+        }
+    }
 }
 

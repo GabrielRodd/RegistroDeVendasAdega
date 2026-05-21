@@ -23,9 +23,9 @@ public class PedidoController {
     }
 
     //GET - Mostrar pedidos por ID
-    @GetMapping("/mostrarporid")
-    public String mostrarPedidoPorId() {
-        return "mostrando por id";
+    @GetMapping("/mostrar/{id}")
+    public PedidoModel mostrarPedidoPorId(@PathVariable Long id) {
+        return pedidoService.mostrarPedidoPorID(id);
     }
 
     //POST - Criar novo pedido
@@ -34,16 +34,16 @@ public class PedidoController {
         return pedidoService.criarPedido(novoPedido);
     }
 
-    //PUT - Atualizar pedido
-    @PutMapping("/editar")
-    public String editarPedido() {
-        return "editando pedido";
+    //PUT - Editar pedido
+    @PutMapping("/editar/{id}")
+    public void editarPedido(@PathVariable Long id, @RequestBody PedidoModel pedidoAtualizado) {
+        pedidoService.editarPedidoPorID(id, pedidoAtualizado);
     }
 
     //DELETE - Deletar pedido
-    @DeleteMapping("/deletar")
-    public String deletarPedido() {
-        return "Deletando pedido";
+    @DeleteMapping("/deletar/{id}")
+    public void deletarPedido(@PathVariable Long id) {
+        pedidoService.deletarPedidoPorID(id);
     }
 
 }
