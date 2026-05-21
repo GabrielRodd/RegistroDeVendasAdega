@@ -1,6 +1,7 @@
 package dev.gabrielroddjava.AdegaAPI.Pedidos;
 
 import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoModel;
+import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoRepository;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoModel;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoRepository;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,12 @@ public class PedidoService {
     //Injetando dependencia do produto repository
     private ProdutoRepository produtoRepository;
 
-    public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository) {
+    private ItemPedidoRepository itemPedidoRepository;
+
+    public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ItemPedidoRepository itemPedidoRepository) {
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
+        this.itemPedidoRepository = itemPedidoRepository;
     }
 
     public PedidoModel criarPedido(PedidoModel novoPedido) {
@@ -68,13 +72,54 @@ public class PedidoService {
         }
     }
 
-    public void editarPedidoPorID(Long id, PedidoModel pedidoAtualizado) {
-        if (pedidoRepository.existsById(id)) {
-            pedidoAtualizado.setId(id);
-            pedidoRepository.save(pedidoAtualizado);
-        } else {
-            System.out.println("pedido nao encontrado");
+    public PedidoModel editarPedidoPorID(Long id, PedidoModel pedidoAtualizado) {
+        PedidoModel pedidoAntigo = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado!"));
+
+        // 2. DEVOLVER PARA A PRATELEIRA: Estorna o estoque dos itens antigos
+        for (ItemPedidoModel itemAntigo : pedidoAntigo.getItensPedido()) {
+            ProdutoModel produto = itemAntigo.getProduto();
+            // Soma a quantidade que tinha sido comprada de volta ao estoque
+            produto.setQtdEstoque(produto.getQtdEstoque() + itemAntigo.getQuantidadeComprada());
+            produtoRepository.save(produto);
         }
+
+        // 3. LIMPAR O CUPOM: Apaga os itens antigos do banco para não duplicar
+        itemPedidoRepository.deleteAll(pedidoAntigo.getItensPedido());
+        pedidoAntigo.getItensPedido().clear();
+
+        // 4. REFAZER A VENDA: Agora aplicamos a lista nova (exatamente como no criarPedido)
+        double valorTotalAcumulado = 0.0;
+        List<ItemPedidoModel> novosItens = pedidoAtualizado.getItensPedido();
+
+        for (ItemPedidoModel novoItem : novosItens) {
+
+            // Busca o produto real para abater o estoque novo
+            ProdutoModel produtoDoBanco = produtoRepository.findById(novoItem.getProduto().getId())
+                    .orElseThrow(() -> new RuntimeException("Bebida não encontrada no catálogo!"));
+
+            if (produtoDoBanco.getQtdEstoque() < novoItem.getQuantidadeComprada()) {
+                throw new RuntimeException("Estoque insuficiente para a bebida: " + produtoDoBanco.getNome());
+            }
+
+            // Subtrai a nova quantidade
+            produtoDoBanco.setQtdEstoque(produtoDoBanco.getQtdEstoque() - novoItem.getQuantidadeComprada());
+            produtoRepository.save(produtoDoBanco);
+
+            // Amarra o novo item no pedido ANTIGO (mantendo o mesmo ID de venda)
+            novoItem.setPedido(pedidoAntigo);
+            novoItem.setProduto(produtoDoBanco);
+            novoItem.setValorUnitarioNaVenda(produtoDoBanco.getValor());
+
+            valorTotalAcumulado += produtoDoBanco.getValor() * novoItem.getQuantidadeComprada();
+        }
+
+        // 5. Atualiza os dados finais do pedido antigo e salva
+        pedidoAntigo.setItensPedido(novosItens);
+        pedidoAntigo.setValorTotalPedido(valorTotalAcumulado);
+
+        // Retorna o pedido atualizado
+        return pedidoRepository.save(pedidoAntigo);
     }
 }
 
