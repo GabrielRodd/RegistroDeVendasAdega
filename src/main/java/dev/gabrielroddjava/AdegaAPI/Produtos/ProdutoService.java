@@ -23,13 +23,13 @@ public class ProdutoService {
         return produtoRepository.findAll();
     }
 
-    public ProdutoModel listarProdutoPorId(Long id) {
+    public ProdutoModel mostrarProdutoPorId(Long id) {
         Optional<ProdutoModel> produtoBuscado = produtoRepository.findById(id);
         return produtoBuscado.orElse(null);
     }
 
     public void deletarProdutoPorId(Long id) {
-        ProdutoModel produtoDeletar = listarProdutoPorId(id);
+        ProdutoModel produtoDeletar = mostrarProdutoPorId(id);
         produtoRepository.delete(produtoDeletar);
     }
 

@@ -21,15 +21,38 @@ public class ProdutoController {
         return "boas vindas a rota";
     }
 
+    //POST - Criar Produto
+    @PostMapping("/criar")
+    public ProdutoModel criarProduto(@RequestBody ProdutoModel novoProduto) {
+        return produtoService.cadastrarNovoProduto(novoProduto);
+    }
+
     //GET - Mostrar todos produtos
     @GetMapping("/mostrar")
     public List<ProdutoModel> mostrarTodosProdutos() {
         return produtoService.listarProdutos();
     }
 
-    //POST - Criar Produto
-    @PostMapping("/criar")
-    public ProdutoModel criarProduto(@RequestBody ProdutoModel novoProduto) {
-        return produtoService.cadastrarNovoProduto(novoProduto);
+    //GET - Mostrar produtos por ID
+    @GetMapping("/mostrar/{id}")
+    public ProdutoModel mostrarProdutoPorID(@PathVariable Long id) {
+        return produtoService.mostrarProdutoPorId(id);
     }
+
+    //PUT - Editar produto
+    @PutMapping("/editar")
+    public void editarProdutoPorID(@PathVariable Long id, @RequestBody ProdutoModel produtoAtualizado) {
+        produtoService.atualizarProdutoPorId(id, produtoAtualizado);
+    }
+
+    //DELETE - Deletar produto
+    @DeleteMapping("/deletar")
+    public void deletarProdutoPorID(@PathVariable Long id) {
+        produtoService.deletarProdutoPorId(id);
+    }
+
+
+
+
+
 }
