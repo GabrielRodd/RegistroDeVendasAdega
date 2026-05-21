@@ -1,5 +1,6 @@
 package dev.gabrielroddjava.AdegaAPI.Item;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.gabrielroddjava.AdegaAPI.Pedidos.PedidoModel;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoModel;
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ public class ItemPedidoModel {
 
     @ManyToOne
     @JoinColumn(name = "Pedido_id")
+    @JsonBackReference
     private PedidoModel pedido;
 
     @ManyToOne
@@ -27,7 +29,7 @@ public class ItemPedidoModel {
     private ProdutoModel produto;
 
     @Column(name = "Quantidade")
-    private int quantidade;
+    private int quantidadeComprada;
 
     @Column(name = "Valor_Unitario")
     private double valorUnitarioNaVenda;

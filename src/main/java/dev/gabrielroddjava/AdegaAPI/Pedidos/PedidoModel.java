@@ -1,5 +1,6 @@
 package dev.gabrielroddjava.AdegaAPI.Pedidos;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoModel;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoModel;
 import jakarta.persistence.*;
@@ -32,5 +33,6 @@ public class PedidoModel {
 
     //Um pedido pode conter muitos produtos
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ItemPedidoModel> itensPedido;
 }

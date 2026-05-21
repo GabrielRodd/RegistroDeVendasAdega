@@ -1,15 +1,25 @@
 package dev.gabrielroddjava.AdegaAPI.Pedidos;
 
+import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoModel;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
 
+    //Injetando o service
+    PedidoService pedidoService;
+
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
+
     //GET - Mostrar todos os pedidos
     @GetMapping("/mostrar")
-    public String mostrarTodosPedidos() {
-        return "mostrando todos os pedidos";
+    public List<PedidoModel> mostrarTodosPedidos() {
+        return pedidoService.mostrarTodosPedidos();
     }
 
     //GET - Mostrar pedidos por ID
@@ -20,8 +30,8 @@ public class PedidoController {
 
     //POST - Criar novo pedido
     @PostMapping("/criar")
-    public String criarPedido(){
-        return "criando pedido";
+    public PedidoModel criarPedido(@RequestBody PedidoModel novoPedido){
+        return pedidoService.criarPedido(novoPedido);
     }
 
     //PUT - Atualizar pedido
