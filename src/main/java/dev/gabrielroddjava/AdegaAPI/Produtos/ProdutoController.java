@@ -40,13 +40,13 @@ public class ProdutoController {
     }
 
     //PUT - Editar produto
-    @PutMapping("/editar")
+    @PutMapping("/editar/{id}")
     public void editarProdutoPorID(@PathVariable Long id, @RequestBody ProdutoModel produtoAtualizado) {
         produtoService.atualizarProdutoPorId(id, produtoAtualizado);
     }
 
     //DELETE - Deletar produto
-    @DeleteMapping("/deletar")
+    @DeleteMapping("/deletar/{id}")
     public void deletarProdutoPorID(@PathVariable Long id) {
         produtoService.deletarProdutoPorId(id);
     }
