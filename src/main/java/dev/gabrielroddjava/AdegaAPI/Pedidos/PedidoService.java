@@ -4,6 +4,7 @@ import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoModel;
 import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoRepository;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoModel;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoRepository;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,6 +69,11 @@ public class PedidoService {
     public void deletarPedidoPorID(Long id) {
         PedidoModel pedidoDeletar = mostrarPedidoPorID(id);
         if (pedidoDeletar != null) {
+            for (ItemPedidoModel itemParaDeletar : pedidoDeletar.getItensPedido()) {
+                ProdutoModel produto = itemParaDeletar.getProduto();
+                produto.setQtdEstoque((produto.getQtdEstoque() + itemParaDeletar.getQuantidadeComprada()));
+                produtoRepository.save(produto);
+            }
             pedidoRepository.delete(pedidoDeletar);
         }
     }
