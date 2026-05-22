@@ -30,20 +30,20 @@ public class ProdutoController {
 
     //GET - Mostrar todos produtos
     @GetMapping("/mostrar")
-    public List<ProdutoModel> mostrarTodosProdutos() {
+    public List<ProdutoDTO> mostrarTodosProdutos() {
         return produtoService.listarProdutos();
     }
 
     //GET - Mostrar produtos por ID
     @GetMapping("/mostrar/{id}")
-    public ProdutoModel mostrarProdutoPorID(@PathVariable Long id) {
+    public ProdutoDTO mostrarProdutoPorID(@PathVariable Long id) {
         return produtoService.mostrarProdutoPorId(id);
     }
 
     //PUT - Editar produto
     @PutMapping("/editar/{id}")
-    public void editarProdutoPorID(@PathVariable Long id, @RequestBody ProdutoModel produtoAtualizado) {
-        produtoService.atualizarProdutoPorId(id, produtoAtualizado);
+    public ProdutoDTO editarProdutoPorID(@PathVariable Long id, @RequestBody ProdutoDTO produtoAtualizado) {
+        return produtoService.atualizarProdutoPorId(id, produtoAtualizado);
     }
 
     //DELETE - Deletar produto

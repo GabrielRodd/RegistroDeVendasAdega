@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
@@ -27,25 +28,31 @@ public class ProdutoService {
         return produtoMapper.toDTO(novoProdutoModel);
     }
 
-    public List<ProdutoModel> listarProdutos() {
-        return produtoRepository.findAll();
+    public List<ProdutoDTO> listarProdutos() {
+        List<ProdutoModel> listaProdutosModel = produtoRepository.findAll();
+        return listaProdutosModel.stream()
+                .map(produtoMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public ProdutoModel mostrarProdutoPorId(Long id) {
-        Optional<ProdutoModel> produtoBuscado = produtoRepository.findById(id);
-        return produtoBuscado.orElse(null);
+    public ProdutoDTO mostrarProdutoPorId(Long id) {
+        Optional<ProdutoModel> produtoBuscadoModel = produtoRepository.findById(id);
+        return produtoBuscadoModel.map(produtoMapper::toDTO).orElse(null);
     }
 
     public void deletarProdutoPorId(Long id) {
-        ProdutoModel produtoDeletar = mostrarProdutoPorId(id);
-        produtoRepository.delete(produtoDeletar);
+        ProdutoDTO produtoDeletarDTO = mostrarProdutoPorId(id);
+        produtoRepository.delete(produtoMapper.toModel(produtoDeletarDTO));
     }
 
-    public ProdutoModel atualizarProdutoPorId(Long id, ProdutoModel produtoAtualizado) {
+    public ProdutoDTO atualizarProdutoPorId(Long id, ProdutoDTO produtoAtualizadoDTO) {
         if (produtoRepository.existsById(id)) {
-            produtoAtualizado.setId(id);
+            ProdutoModel produtoAtualizadoModel = produtoMapper.toModel(produtoAtualizadoDTO);
+            produtoAtualizadoModel.setId(id);
+            produtoRepository.save(produtoAtualizadoModel);
+            return produtoMapper.toDTO(produtoAtualizadoModel);
+        } else {
+            return null;
         }
-        return produtoRepository.save(produtoAtualizado);
     }
-
 }
