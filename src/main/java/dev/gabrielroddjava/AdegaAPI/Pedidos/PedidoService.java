@@ -1,7 +1,9 @@
 package dev.gabrielroddjava.AdegaAPI.Pedidos;
 
+import dev.gabrielroddjava.AdegaAPI.Dtos.PedidoDTO;
 import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoModel;
 import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoRepository;
+import dev.gabrielroddjava.AdegaAPI.Mappers.PedidoMapper;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoModel;
 import dev.gabrielroddjava.AdegaAPI.Produtos.ProdutoRepository;
 import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
@@ -19,18 +21,25 @@ public class PedidoService {
     //Injetando dependencia do produto repository
     private ProdutoRepository produtoRepository;
 
+    //Injetando dependencia do produto Mapper
+    private PedidoMapper pedidoMapper;
+
+    //Injetando dependencia do itempedidorepository
     private ItemPedidoRepository itemPedidoRepository;
 
-    public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ItemPedidoRepository itemPedidoRepository) {
+    public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ItemPedidoRepository itemPedidoRepository, PedidoMapper pedidoMapper) {
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
         this.itemPedidoRepository = itemPedidoRepository;
+        this.pedidoMapper = pedidoMapper;
     }
 
-    public PedidoModel criarPedido(PedidoModel novoPedido) {
+    public PedidoDTO criarPedido(PedidoDTO novoPedidoDTO) {
+        PedidoModel novoPedidoModel = pedidoMapper.toModel(novoPedidoDTO);
+
         double valorTotalPedido = 0.0;
 
-        List<ItemPedidoModel> itensDoPedido = novoPedido.getItensPedido();
+        List<ItemPedidoModel> itensDoPedido = novoPedidoModel.getItensPedido();
 
         for (ItemPedidoModel item : itensDoPedido) {
             ProdutoModel produtoDoBanco = produtoRepository.findById(item.getProduto().getId())
@@ -43,7 +52,7 @@ public class PedidoService {
             produtoDoBanco.setQtdEstoque(produtoDoBanco.getQtdEstoque() - item.getQuantidadeComprada());
             produtoRepository.save(produtoDoBanco);
 
-            item.setPedido(novoPedido);
+            item.setPedido(novoPedidoModel);
             item.setProduto(produtoDoBanco);
 
             item.setValorUnitarioNaVenda(produtoDoBanco.getValor());
@@ -52,9 +61,11 @@ public class PedidoService {
             valorTotalPedido += subTotalItem;
         }
 
-        novoPedido.setValorTotalPedido(valorTotalPedido);
+        novoPedidoModel.setValorTotalPedido(valorTotalPedido);
 
-        return pedidoRepository.save(novoPedido);
+        PedidoModel pedidoSalvoModel = pedidoRepository.save(novoPedidoModel);
+
+        return pedidoMapper.toDTO(pedidoSalvoModel);
     }
 
     public List<PedidoModel> mostrarTodosPedidos() {

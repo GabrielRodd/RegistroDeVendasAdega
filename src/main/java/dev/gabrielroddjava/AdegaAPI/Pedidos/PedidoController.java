@@ -1,5 +1,6 @@
 package dev.gabrielroddjava.AdegaAPI.Pedidos;
 
+import dev.gabrielroddjava.AdegaAPI.Dtos.PedidoDTO;
 import dev.gabrielroddjava.AdegaAPI.Item.ItemPedidoModel;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class PedidoController {
 
     //POST - Criar novo pedido
     @PostMapping("/criar")
-    public PedidoModel criarPedido(@RequestBody PedidoModel novoPedido){
+    public PedidoDTO criarPedido(@RequestBody PedidoDTO novoPedido){
         return pedidoService.criarPedido(novoPedido);
     }
 
