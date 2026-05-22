@@ -1,5 +1,6 @@
 package dev.gabrielroddjava.AdegaAPI.Produtos;
 
+import dev.gabrielroddjava.AdegaAPI.Dtos.ProdutoDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class ProdutoController {
 
     //POST - Criar Produto
     @PostMapping("/criar")
-    public ProdutoModel criarProduto(@RequestBody ProdutoModel novoProduto) {
+    public ProdutoDTO criarProduto(@RequestBody ProdutoDTO novoProduto) {
         return produtoService.cadastrarNovoProduto(novoProduto);
     }
 

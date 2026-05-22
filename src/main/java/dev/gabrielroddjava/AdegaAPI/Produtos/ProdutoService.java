@@ -1,5 +1,7 @@
 package dev.gabrielroddjava.AdegaAPI.Produtos;
 
+import dev.gabrielroddjava.AdegaAPI.Dtos.ProdutoDTO;
+import dev.gabrielroddjava.AdegaAPI.Mappers.ProdutoMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +13,18 @@ public class ProdutoService {
     //Injetando dependencia do Repository
     private ProdutoRepository produtoRepository;
 
-    public ProdutoService (ProdutoRepository produtoRepository) {
+    //Injetando dependencia do Repository
+    private ProdutoMapper produtoMapper;
+
+    public ProdutoService (ProdutoRepository produtoRepository, ProdutoMapper produtoMapper) {
         this.produtoRepository = produtoRepository;
+        this.produtoMapper = produtoMapper;
     }
 
-    public ProdutoModel cadastrarNovoProduto(ProdutoModel novoProduto) {
-        return produtoRepository.save(novoProduto);
+    public ProdutoDTO cadastrarNovoProduto(ProdutoDTO novoProduto) {
+        ProdutoModel novoProdutoModel = produtoMapper.toModel(novoProduto);
+        produtoRepository.save(novoProdutoModel);
+        return produtoMapper.toDTO(novoProdutoModel);
     }
 
     public List<ProdutoModel> listarProdutos() {
