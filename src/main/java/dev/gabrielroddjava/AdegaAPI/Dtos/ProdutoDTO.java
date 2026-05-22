@@ -13,5 +13,4 @@ public class ProdutoDTO {
     private String nome;
     private double valor;
     private int qtdEstoque;
-    private ProdutoModel produto;
 }
