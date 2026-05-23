@@ -19,13 +19,13 @@ public class PedidoController {
 
     //GET - Mostrar todos os pedidos
     @GetMapping("/mostrar")
-    public List<PedidoModel> mostrarTodosPedidos() {
+    public List<PedidoDTO> mostrarTodosPedidos() {
         return pedidoService.mostrarTodosPedidos();
     }
 
     //GET - Mostrar pedidos por ID
     @GetMapping("/mostrar/{id}")
-    public PedidoModel mostrarPedidoPorId(@PathVariable Long id) {
+    public PedidoDTO mostrarPedidoPorId(@PathVariable Long id) {
         return pedidoService.mostrarPedidoPorID(id);
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
@@ -68,24 +69,27 @@ public class PedidoService {
         return pedidoMapper.toDTO(pedidoSalvoModel);
     }
 
-    public List<PedidoModel> mostrarTodosPedidos() {
-        return pedidoRepository.findAll();
+    public List<PedidoDTO> mostrarTodosPedidos() {
+        List<PedidoModel> listaPedidosModel = pedidoRepository.findAll();
+        return listaPedidosModel.stream()
+                .map(pedidoMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public PedidoModel mostrarPedidoPorID(Long id) {
+    public PedidoDTO mostrarPedidoPorID(Long id) {
         Optional<PedidoModel> pedidoMostrar = pedidoRepository.findById(id);
-        return pedidoMostrar.orElse(null);
+        return pedidoMostrar.map(pedidoMapper::toDTO).orElse(null);
     }
 
     public void deletarPedidoPorID(Long id) {
-        PedidoModel pedidoDeletar = mostrarPedidoPorID(id);
+        PedidoDTO pedidoDeletar = mostrarPedidoPorID(id);
         if (pedidoDeletar != null) {
             for (ItemPedidoModel itemParaDeletar : pedidoDeletar.getItensPedido()) {
                 ProdutoModel produto = itemParaDeletar.getProduto();
                 produto.setQtdEstoque((produto.getQtdEstoque() + itemParaDeletar.getQuantidadeComprada()));
                 produtoRepository.save(produto);
             }
-            pedidoRepository.delete(pedidoDeletar);
+            pedidoRepository.delete(pedidoMapper.toModel(pedidoDeletar));
         }
     }
 
