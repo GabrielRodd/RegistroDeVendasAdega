@@ -40,9 +40,10 @@ public class ProdutoService {
         return produtoBuscadoModel.map(produtoMapper::toDTO).orElse(null);
     }
 
-    public void deletarProdutoPorId(Long id) {
+    public ProdutoDTO deletarProdutoPorId(Long id) {
         ProdutoDTO produtoDeletarDTO = mostrarProdutoPorId(id);
         produtoRepository.delete(produtoMapper.toModel(produtoDeletarDTO));
+        return produtoDeletarDTO;
     }
 
     public ProdutoDTO atualizarProdutoPorId(Long id, ProdutoDTO produtoAtualizadoDTO) {

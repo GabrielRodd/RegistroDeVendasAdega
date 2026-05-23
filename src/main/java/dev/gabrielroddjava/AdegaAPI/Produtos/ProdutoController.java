@@ -1,6 +1,8 @@
 package dev.gabrielroddjava.AdegaAPI.Produtos;
 
 import dev.gabrielroddjava.AdegaAPI.Dtos.ProdutoDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,31 +26,56 @@ public class ProdutoController {
 
     //POST - Criar Produto
     @PostMapping("/criar")
-    public ProdutoDTO criarProduto(@RequestBody ProdutoDTO novoProduto) {
-        return produtoService.cadastrarNovoProduto(novoProduto);
+    public ResponseEntity<String> criarProduto(@RequestBody ProdutoDTO novoProduto) {
+        ProdutoDTO novoProdutoDTO = produtoService.cadastrarNovoProduto(novoProduto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Produto: " + novoProdutoDTO.getNome() + " criado com sucesso. ID: " + novoProdutoDTO.getId());
     }
 
     //GET - Mostrar todos produtos
     @GetMapping("/mostrar")
-    public List<ProdutoDTO> mostrarTodosProdutos() {
-        return produtoService.listarProdutos();
+    public ResponseEntity<List<ProdutoDTO>> mostrarTodosProdutos() {
+        List<ProdutoDTO> listaProdutoDTO = produtoService.listarProdutos();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(listaProdutoDTO);
     }
 
     //GET - Mostrar produtos por ID
     @GetMapping("/mostrar/{id}")
-    public ProdutoDTO mostrarProdutoPorID(@PathVariable Long id) {
-        return produtoService.mostrarProdutoPorId(id);
+    public ResponseEntity<Object> mostrarProdutoPorID(@PathVariable Long id) {
+        ProdutoDTO produtoMostrar = produtoService.mostrarProdutoPorId(id);
+        if (produtoMostrar != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(produtoMostrar);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("ID " + id + " nao existe na lista de produtos");
+        }
     }
 
     //PUT - Editar produto
     @PutMapping("/editar/{id}")
-    public ProdutoDTO editarProdutoPorID(@PathVariable Long id, @RequestBody ProdutoDTO produtoAtualizado) {
-        return produtoService.atualizarProdutoPorId(id, produtoAtualizado);
+    public ResponseEntity<String> editarProdutoPorID(@PathVariable Long id, @RequestBody ProdutoDTO produtoAtualizado) {
+        ProdutoDTO produto = produtoService.atualizarProdutoPorId(id, produtoAtualizado);
+        if (produto != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Produto: " + produto.getNome() + " editado com sucesso. ID: " + produto.getId());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Produto de ID " + id + " nao existe no banco de dados.");
+        }
     }
 
     //DELETE - Deletar produto
     @DeleteMapping("/deletar/{id}")
-    public void deletarProdutoPorID(@PathVariable Long id) {
-        produtoService.deletarProdutoPorId(id);
+    public ResponseEntity<String> deletarProdutoPorID(@PathVariable Long id) {
+        ProdutoDTO produtoDeletar = produtoService.deletarProdutoPorId(id);
+        if (produtoDeletar != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Produto de ID " + id + " deletado com sucesso");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Produto de ID " + id + " nao existe no banco de dados");
+        }
     }
 }
