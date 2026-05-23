@@ -93,7 +93,7 @@ public class PedidoService {
         }
     }
 
-    public PedidoModel editarPedidoPorID(Long id, PedidoModel pedidoAtualizado) {
+    public PedidoDTO editarPedidoPorID(Long id, PedidoDTO pedidoAtualizado) {
         PedidoModel pedidoAntigo = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado!"));
 
@@ -140,7 +140,8 @@ public class PedidoService {
         pedidoAntigo.setValorTotalPedido(valorTotalAcumulado);
 
         // Retorna o pedido atualizado
-        return pedidoRepository.save(pedidoAntigo);
+        PedidoModel pedidoAntigoSalvo = pedidoRepository.save(pedidoAntigo);
+        return pedidoMapper.toDTO(pedidoAntigoSalvo);
     }
 }
 

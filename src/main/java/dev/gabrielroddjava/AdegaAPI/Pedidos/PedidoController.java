@@ -37,8 +37,8 @@ public class PedidoController {
 
     //PUT - Editar pedido
     @PutMapping("/editar/{id}")
-    public void editarPedido(@PathVariable Long id, @RequestBody PedidoModel pedidoAtualizado) {
-        pedidoService.editarPedidoPorID(id, pedidoAtualizado);
+    public PedidoDTO editarPedido(@PathVariable Long id, @RequestBody PedidoDTO pedidoAtualizado) {
+        return pedidoService.editarPedidoPorID(id, pedidoAtualizado);
     }
 
     //DELETE - Deletar pedido
