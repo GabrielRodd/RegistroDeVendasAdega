@@ -12,7 +12,7 @@ import java.util.List;
 public class ProdutoController {
 
     //Injetando service
-    ProdutoService produtoService;
+    private final ProdutoService produtoService;
 
     public ProdutoController(ProdutoService produtoService) {
         this.produtoService = produtoService;

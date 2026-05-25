@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 public class ProdutoService {
 
     //Injetando dependencia do Repository
-    private ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
 
     //Injetando dependencia do Repository
-    private ProdutoMapper produtoMapper;
+    private final ProdutoMapper produtoMapper;
 
     public ProdutoService (ProdutoRepository produtoRepository, ProdutoMapper produtoMapper) {
         this.produtoRepository = produtoRepository;

@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
 public class PedidoService {
 
     //Injetando dependencia do repository
-    private PedidoRepository pedidoRepository;
+    private final PedidoRepository pedidoRepository;
 
     //Injetando dependencia do produto repository
-    private ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
 
     //Injetando dependencia do produto Mapper
-    private PedidoMapper pedidoMapper;
+    private final PedidoMapper pedidoMapper;
 
     //Injetando dependencia do itempedidorepository
-    private ItemPedidoRepository itemPedidoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
 
     public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ItemPedidoRepository itemPedidoRepository, PedidoMapper pedidoMapper) {
         this.pedidoRepository = pedidoRepository;

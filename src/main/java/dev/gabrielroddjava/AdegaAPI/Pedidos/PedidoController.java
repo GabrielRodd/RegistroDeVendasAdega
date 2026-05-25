@@ -11,7 +11,7 @@ import java.util.List;
 public class PedidoController {
 
     //Injetando o service
-    PedidoService pedidoService;
+    private final PedidoService pedidoService;
 
     public PedidoController(PedidoService pedidoService) {
         this.pedidoService = pedidoService;
