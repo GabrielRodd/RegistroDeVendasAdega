@@ -69,8 +69,9 @@ public class ProdutoController {
     //DELETE - Deletar produto
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<String> deletarProdutoPorID(@PathVariable Long id) {
-        ProdutoDTO produtoDeletar = produtoService.deletarProdutoPorId(id);
+        ProdutoDTO produtoDeletar = produtoService.mostrarProdutoPorId(id);
         if (produtoDeletar != null) {
+            produtoService.deletarProdutoPorId(id);
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Produto de ID " + id + " deletado com sucesso");
         } else {
